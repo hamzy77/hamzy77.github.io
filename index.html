@@ -379,8 +379,9 @@
       padding: 36px 32px;
       position: relative;
       overflow: hidden;
+      opacity: 1 !important;
       transition: transform .3s ease;
-      cursor: none;
+      cursor: default;
     }
     .skill-card::before {
       content: '';
@@ -456,7 +457,8 @@
       position: relative; overflow: hidden;
       aspect-ratio: 4/3;
       background: var(--grey);
-      cursor: none;
+      opacity: 1 !important;
+      cursor: default;
     }
     .project-card.wide {
       grid-column: span 2;
@@ -846,42 +848,42 @@
       </div>
     </div>
     <div class="skills-grid">
-      <div class="skill-card reveal" style="--w: 90%">
+      <div class="skill-card" style="--w: 90%">
         <div class="skill-icon">PS</div>
         <div class="skill-name">Photoshop</div>
         <div class="skill-type">Image Editing · Digital Art</div>
         <div class="skill-bar-wrap"><div class="skill-bar"></div></div>
         <div class="skill-pct">Advanced</div>
       </div>
-      <div class="skill-card reveal" style="--w: 85%">
+      <div class="skill-card" style="--w: 85%">
         <div class="skill-icon">AI</div>
         <div class="skill-name">Illustrator</div>
         <div class="skill-type">Vector · Pattern Design</div>
         <div class="skill-bar-wrap"><div class="skill-bar"></div></div>
         <div class="skill-pct">Advanced</div>
       </div>
-      <div class="skill-card reveal" style="--w: 75%">
+      <div class="skill-card" style="--w: 75%">
         <div class="skill-icon">ID</div>
         <div class="skill-name">InDesign</div>
         <div class="skill-type">Layout · Print Design</div>
         <div class="skill-bar-wrap"><div class="skill-bar"></div></div>
         <div class="skill-pct">Intermediate</div>
       </div>
-      <div class="skill-card reveal" style="--w: 80%">
+      <div class="skill-card" style="--w: 80%">
         <div class="skill-icon">WM</div>
         <div class="skill-name">Wavemaker</div>
         <div class="skill-type">Textile CAD · Weave Planning</div>
         <div class="skill-bar-wrap"><div class="skill-bar"></div></div>
         <div class="skill-pct">Proficient</div>
       </div>
-      <div class="skill-card reveal" style="--w: 78%">
+      <div class="skill-card" style="--w: 78%">
         <div class="skill-icon">EW</div>
         <div class="skill-name">Easywave</div>
         <div class="skill-type">Fabric Structure · CAD</div>
         <div class="skill-bar-wrap"><div class="skill-bar"></div></div>
         <div class="skill-pct">Proficient</div>
       </div>
-      <div class="skill-card reveal" style="--w: 85%">
+      <div class="skill-card" style="--w: 85%">
         <div class="skill-icon">FA</div>
         <div class="skill-name">Fabric Analysis</div>
         <div class="skill-type">Material Knowledge · Structure</div>
@@ -902,7 +904,7 @@
     </div>
     <div class="projects-grid">
 
-      <div class="project-card reveal">
+      <div class="project-card">
         <div class="project-bg p1">
           <div class="p-pattern"></div>
         </div>
@@ -917,7 +919,7 @@
         </div>
       </div>
 
-      <div class="project-card reveal">
+      <div class="project-card">
         <div class="project-bg p2">
           <div class="p-pattern"></div>
         </div>
@@ -932,7 +934,7 @@
         </div>
       </div>
 
-      <div class="project-card wide reveal">
+      <div class="project-card wide">
         <div class="project-bg p3">
           <div class="p-pattern"></div>
         </div>
@@ -1055,7 +1057,8 @@
       });
     }, { threshold: 0.12 });
 
-    document.querySelectorAll('.reveal, .skill-card').forEach(el => observer.observe(el));
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    document.querySelectorAll('.skill-card').forEach(el => el.classList.add('in-view'));
 
     // ─── ACTIVE NAV ───────────────────────────────────
     const sections = document.querySelectorAll('section[id]');
