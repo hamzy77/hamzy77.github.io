@@ -12,13 +12,13 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --black:   #080808;
+      --black:   #12131a;
       --white:   #f0f0ed;
       --acid:    #c8ff00;
       --acid2:   #9dcc00;
-      --grey:    #1a1a1a;
-      --mid:     #444;
-      --dim:     #888;
+      --grey:    #1e2030;
+      --mid:     #555;
+      --dim:     #999;
       --font-display: 'Don Graffiti', cursive;
       --font-cond:    'Bebas Neue', sans-serif;
       --font-body:    'Rajdhani', sans-serif;
@@ -27,7 +27,12 @@
     html { scroll-behavior: smooth; }
 
     body {
-      background: var(--black);
+      background-color: var(--black);
+      background-image:
+        radial-gradient(ellipse 80% 60% at 15% 10%,  rgba(90,40,160,.18) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 85% 80%,  rgba(200,255,0,.07) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 40% at 70% 20%,  rgba(30,80,200,.12) 0%, transparent 50%),
+        radial-gradient(ellipse 70% 60% at 10% 85%,  rgba(160,30,80,.10) 0%, transparent 55%);
       color: var(--white);
       font-family: var(--font-body);
       font-weight: 300;
@@ -65,7 +70,7 @@
       content: '';
       position: fixed; inset: 0;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-      opacity: .025;
+      opacity: .06;
       pointer-events: none;
       z-index: 1;
     }
