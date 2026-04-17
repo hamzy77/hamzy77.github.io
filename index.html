@@ -389,7 +389,7 @@
       background: var(--acid);
       transition: width .4s ease;
     }
-    .skill-card:hover { transform: translateY(-4px); }
+    .skill-card:hover { transform: translateY(-4px); color: var(--white); }
     .skill-card:hover::before { width: 100%; }
     .skill-icon {
       font-family: var(--font-display);
@@ -401,6 +401,7 @@
     }
     .skill-card:hover .skill-icon { opacity: .7; }
     .skill-name {
+      color: var(--white) !important;
       font-family: var(--font-cond);
       font-size: 1.1rem; font-weight: 700;
       letter-spacing: .1em; text-transform: uppercase;
@@ -484,13 +485,15 @@
       letter-spacing: .03em;
     }
     .project-title {
+      color: var(--white);
       font-family: var(--font-display);
       font-size: clamp(1.5rem, 3vw, 2.8rem);
       line-height: 1;
       transform: translateY(8px);
       transition: transform .35s ease;
     }
-    .project-card:hover .project-title { transform: translateY(0); }
+    .project-card:hover .project-title {
+      color: var(--white); transform: translateY(0); }
     .project-tags {
       display: flex; flex-wrap: wrap; gap: 8px;
       margin-top: 16px;
