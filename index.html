@@ -531,31 +531,22 @@
       transform: scale(1.06);
       filter: grayscale(40%);
     }
-    .pdf-thumb-canvas {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: top center;
-      display: block;
-    }
     .pdf-thumb-fallback {
-      font-family: var(--font-cond);
-      font-size: .65rem;
-      font-weight: 700;
-      letter-spacing: .05em;
-      text-transform: uppercase;
-      color: var(--dim);
+      position: relative;
+      z-index: 1;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
     }
     .pdf-thumb-fallback .pdf-icon {
       font-family: var(--font-display);
-      font-size: 2.2rem;
+      font-size: 2.4rem;
+      letter-spacing: .04em;
       color: var(--acid);
-      opacity: .5;
+      opacity: .35;
+      transition: opacity .3s;
     }
+    .project-card:hover .pdf-thumb-fallback .pdf-icon { opacity: .6; }
     .project-overlay {
       position: absolute; inset: 0;
       background: linear-gradient(to top, rgba(8,8,8,.95) 0%, rgba(8,8,8,.3) 60%, transparent 100%);
@@ -1134,13 +1125,7 @@
     <p class="footer-copy">© 2026 HAMDI Mohamed — Textile Designer</p>
   </footer>
 
-  <!-- PDF.js for generating live thumbnail previews of each PDF's first page -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script>
-    if (window['pdfjsLib']) {
-      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    }
-
     // ─── PROJECT DATA ─────────────────────────────────
     // Files are expected at assets/1.pdf ... assets/10.pdf
     const wavemakerProjects = [
@@ -1158,7 +1143,7 @@
       { file: 'assets/10.pdf', num: '10', title: 'FABRIC DESIGN 06', tags: ['Easyweave', 'CAD'] },
     ];
 
-    function buildCard(project) {
+    function buildCard(project, patternClass) {
       const a = document.createElement('a');
       a.className = 'project-card';
       a.href = project.file;
@@ -1168,10 +1153,10 @@
       const tagsHtml = project.tags.map(t => `<span class="tag">${t}</span>`).join('');
 
       a.innerHTML = `
-        <div class="project-bg">
+        <div class="project-bg ${patternClass}">
+          <div class="p-pattern"></div>
           <div class="pdf-thumb-fallback">
             <span class="pdf-icon">PDF</span>
-            <span>Loading preview…</span>
           </div>
         </div>
         <div class="pdf-open-icon">↗</div>
@@ -1187,89 +1172,11 @@
     function renderGrid(containerId, projects) {
       const container = document.getElementById(containerId);
       if (!container) return;
-      projects.forEach(project => {
-        const card = buildCard(project);
+      const patterns = ['p1', 'p2', 'p3'];
+      projects.forEach((project, i) => {
+        const card = buildCard(project, patterns[i % patterns.length]);
         container.appendChild(card);
-        renderPdfThumbnail(card, project.file);
       });
-    }
-
-    // ─── PDF THUMBNAIL RENDERING (static, cached) ─────
-    // Renders a small snapshot of page 1 ONCE, then stores it as a
-    // compressed JPEG (base64) in localStorage. Every later visit reads
-    // the cached image directly — no re-render, no re-fetching the PDF.
-    const THUMB_CACHE_PREFIX = 'pdfThumb_v1_';
-    const THUMB_WIDTH = 260; // small snapshot, not full page size
-
-    function getCachedThumb(fileUrl) {
-      try {
-        return localStorage.getItem(THUMB_CACHE_PREFIX + fileUrl);
-      } catch (err) {
-        return null; // localStorage unavailable (private mode, etc.)
-      }
-    }
-
-    function setCachedThumb(fileUrl, dataUrl) {
-      try {
-        localStorage.setItem(THUMB_CACHE_PREFIX + fileUrl, dataUrl);
-      } catch (err) {
-        // Storage full or blocked — fine, thumbnail just won't persist
-      }
-    }
-
-    function showThumbImage(bgEl, dataUrl) {
-      bgEl.innerHTML = '';
-      const img = document.createElement('img');
-      img.className = 'pdf-thumb-canvas';
-      img.loading = 'lazy';
-      img.decoding = 'async';
-      img.src = dataUrl;
-      bgEl.appendChild(img);
-    }
-
-    async function renderPdfThumbnail(cardEl, fileUrl) {
-      const bgEl = cardEl.querySelector('.project-bg');
-      const fallbackEl = cardEl.querySelector('.pdf-thumb-fallback');
-
-      // 1) Already cached from a previous visit — use it straight away.
-      const cached = getCachedThumb(fileUrl);
-      if (cached) {
-        showThumbImage(bgEl, cached);
-        return;
-      }
-
-      if (!window['pdfjsLib']) {
-        if (fallbackEl) fallbackEl.querySelector('span:last-child').textContent = 'PDF';
-        return;
-      }
-
-      try {
-        const loadingTask = pdfjsLib.getDocument(fileUrl);
-        const pdf = await loadingTask.promise;
-        const page = await pdf.getPage(1);
-
-        const baseViewport = page.getViewport({ scale: 1 });
-        const scale = THUMB_WIDTH / baseViewport.width;
-        const viewport = page.getViewport({ scale });
-
-        const canvas = document.createElement('canvas');
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
-        const ctx = canvas.getContext('2d');
-
-        await page.render({ canvasContext: ctx, viewport }).promise;
-
-        // Compress to a small JPEG snapshot and cache it.
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-        setCachedThumb(fileUrl, dataUrl);
-        showThumbImage(bgEl, dataUrl);
-      } catch (err) {
-        // File not reachable yet / failed to load — keep a clean fallback instead of breaking the layout
-        if (fallbackEl) {
-          fallbackEl.querySelector('span:last-child').textContent = 'Preview unavailable';
-        }
-        console.warn('Could not render PDF thumbnail for', fileUrl, err);
-      }
     }
 
     renderGrid('wavemaker-grid', wavemakerProjects);
