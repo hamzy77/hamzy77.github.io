@@ -456,16 +456,63 @@
       line-height: .9;
     }
     .work-heading span { color: var(--acid); display: block; }
+    .work-subheading {
+      font-family: var(--font-cond);
+      font-size: .8rem;
+      font-weight: 600;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: var(--dim);
+      max-width: 320px;
+      text-align: right;
+    }
+    .work-group {
+      margin-bottom: 64px;
+    }
+    .work-group:last-child { margin-bottom: 0; }
+    .work-group-title {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .work-group-title h3 {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 2.4vw, 2.2rem);
+      color: var(--white);
+      letter-spacing: .02em;
+    }
+    .work-group-title .line {
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,.08);
+    }
+    .work-group-count {
+      font-family: var(--font-cond);
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: var(--acid);
+      border: 1px solid rgba(200,255,0,.3);
+      padding: 4px 10px;
+      white-space: nowrap;
+    }
     .projects-grid {
       display: grid; grid-template-columns: 1fr 1fr;
       gap: 2px;
+    }
+    @media (min-width: 901px) {
+      .projects-grid.pdf-grid { grid-template-columns: repeat(4, 1fr); }
     }
     .project-card {
       position: relative; overflow: hidden;
       aspect-ratio: 4/3;
       background: var(--grey);
       opacity: 1 !important;
-      cursor: default;
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
     }
     .project-card.wide {
       grid-column: span 2;
@@ -476,10 +523,38 @@
       background-size: cover; background-position: center;
       filter: grayscale(100%);
       transition: transform .6s cubic-bezier(.25,.46,.45,.94), filter .4s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .project-card:hover .project-bg {
       transform: scale(1.06);
       filter: grayscale(40%);
+    }
+    .pdf-thumb-canvas {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+    .pdf-thumb-fallback {
+      font-family: var(--font-cond);
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: var(--dim);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .pdf-thumb-fallback .pdf-icon {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      color: var(--acid);
+      opacity: .5;
     }
     .project-overlay {
       position: absolute; inset: 0;
@@ -487,6 +562,7 @@
       display: flex; flex-direction: column; justify-content: flex-end;
       padding: 36px;
     }
+    .pdf-grid .project-overlay { padding: 20px; }
     .project-num {
       font-family: var(--font-display);
       font-size: .85rem; color: var(--acid);
@@ -500,6 +576,9 @@
       line-height: 1;
       transform: translateY(8px);
       transition: transform .35s ease;
+    }
+    .pdf-grid .project-title {
+      font-size: clamp(1rem, 1.6vw, 1.3rem);
     }
     .project-card:hover .project-title {
       color: var(--white); transform: translateY(0); }
@@ -519,6 +598,22 @@
       color: var(--acid);
       padding: 4px 10px;
     }
+    .pdf-open-icon {
+      position: absolute;
+      top: 16px; right: 16px;
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: rgba(8,8,8,.6);
+      border: 1px solid rgba(200,255,0,.3);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--acid);
+      font-size: .8rem;
+      opacity: 0;
+      transform: translateY(-6px);
+      transition: opacity .25s, transform .25s;
+      z-index: 2;
+    }
+    .project-card:hover .pdf-open-icon { opacity: 1; transform: translateY(0); }
     /* Placeholder patterns for project cards */
     .p1 { background: linear-gradient(135deg, #1a1a1a 0%, #2a2a1a 100%); }
     .p2 { background: linear-gradient(135deg, #1a1a2a 0%, #0a0a0a 100%); }
@@ -725,7 +820,10 @@
       #skills { padding: 80px 24px; }
       .skills-grid { grid-template-columns: 1fr 1fr; }
       #work { padding: 80px 24px; }
+      .work-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .work-subheading { text-align: left; }
       .projects-grid { grid-template-columns: 1fr; }
+      .projects-grid.pdf-grid { grid-template-columns: 1fr 1fr; }
       .project-card.wide { grid-column: span 1; aspect-ratio: 4/3; }
       #contact { }
       .contact-hero { padding: 60px 24px 40px; }
@@ -736,6 +834,7 @@
       .skills-grid { grid-template-columns: 1fr; }
       .about-stats { grid-template-columns: 1fr 1fr; }
       .form-row { grid-template-columns: 1fr; }
+      .projects-grid.pdf-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -914,55 +1013,31 @@
         <p class="section-tag">Portfolio</p>
         <h2 class="work-heading">SELECTED<span>WORK</span></h2>
       </div>
+      <p class="work-subheading">CAD & weave-structure files from Wavemaker and Easyweave — click any card to open the full PDF.</p>
     </div>
-    <div class="projects-grid">
 
-      <div class="project-card">
-        <div class="project-bg p1">
-          <div class="p-pattern"></div>
-        </div>
-        <div class="project-overlay">
-          <div class="project-num">01 / 2026</div>
-          <div class="project-title">WOVEN GEOMETRY<br>COLLECTION</div>
-          <div class="project-tags">
-            <span class="tag">Textile</span>
-            <span class="tag">Weave</span>
-            <span class="tag">Pattern</span>
-          </div>
-        </div>
+    <!-- WAVEMAKER PROJECTS -->
+    <div class="work-group">
+      <div class="work-group-title">
+        <h3>Wavemaker</h3>
+        <div class="line"></div>
+        <span class="work-group-count">4 Files</span>
       </div>
-
-      <div class="project-card">
-        <div class="project-bg p2">
-          <div class="p-pattern"></div>
-        </div>
-        <div class="project-overlay">
-          <div class="project-num">02 / 2026</div>
-          <div class="project-title">UPEGYPT<br>INTERNSHIP</div>
-          <div class="project-tags">
-            <span class="tag">Brand</span>
-            <span class="tag">Collaboration</span>
-            <span class="tag">Industry</span>
-          </div>
-        </div>
+      <div class="projects-grid pdf-grid" id="wavemaker-grid">
+        <!-- PDF cards injected by script -->
       </div>
+    </div>
 
-      <div class="project-card wide">
-        <div class="project-bg p3">
-          <div class="p-pattern"></div>
-        </div>
-        <div class="project-overlay">
-          <div class="project-num">03 / 2025</div>
-          <div class="project-title">EDITORIAL TEXTILE CONCEPTS</div>
-          <div class="project-tags">
-            <span class="tag">Fashion</span>
-            <span class="tag">Styling</span>
-            <span class="tag">Concept</span>
-            <span class="tag">Photography</span>
-          </div>
-        </div>
+    <!-- EASYWEAVE PROJECTS -->
+    <div class="work-group">
+      <div class="work-group-title">
+        <h3>Easyweave</h3>
+        <div class="line"></div>
+        <span class="work-group-count">6 Files</span>
       </div>
-
+      <div class="projects-grid pdf-grid" id="easyweave-grid">
+        <!-- PDF cards injected by script -->
+      </div>
     </div>
   </section>
 
@@ -1059,7 +1134,108 @@
     <p class="footer-copy">© 2026 HAMDI Mohamed — Textile Designer</p>
   </footer>
 
+  <!-- PDF.js for generating live thumbnail previews of each PDF's first page -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script>
+    if (window['pdfjsLib']) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+
+    // ─── PROJECT DATA ─────────────────────────────────
+    // Files are expected at assets/1.pdf ... assets/10.pdf
+    const wavemakerProjects = [
+      { file: 'assets/1.pdf', num: '01', title: 'WEAVE STRUCTURE 01', tags: ['Wavemaker', 'Weave Plan'] },
+      { file: 'assets/2.pdf', num: '02', title: 'WEAVE STRUCTURE 02', tags: ['Wavemaker', 'Weave Plan'] },
+      { file: 'assets/3.pdf', num: '03', title: 'WEAVE STRUCTURE 03', tags: ['Wavemaker', 'Weave Plan'] },
+      { file: 'assets/4.pdf', num: '04', title: 'WEAVE STRUCTURE 04', tags: ['Wavemaker', 'Weave Plan'] },
+    ];
+    const easyweaveProjects = [
+      { file: 'assets/5.pdf',  num: '05', title: 'FABRIC DESIGN 01', tags: ['Easyweave', 'CAD'] },
+      { file: 'assets/6.pdf',  num: '06', title: 'FABRIC DESIGN 02', tags: ['Easyweave', 'CAD'] },
+      { file: 'assets/7.pdf',  num: '07', title: 'FABRIC DESIGN 03', tags: ['Easyweave', 'CAD'] },
+      { file: 'assets/8.pdf',  num: '08', title: 'FABRIC DESIGN 04', tags: ['Easyweave', 'CAD'] },
+      { file: 'assets/9.pdf',  num: '09', title: 'FABRIC DESIGN 05', tags: ['Easyweave', 'CAD'] },
+      { file: 'assets/10.pdf', num: '10', title: 'FABRIC DESIGN 06', tags: ['Easyweave', 'CAD'] },
+    ];
+
+    function buildCard(project) {
+      const a = document.createElement('a');
+      a.className = 'project-card';
+      a.href = project.file;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+
+      const tagsHtml = project.tags.map(t => `<span class="tag">${t}</span>`).join('');
+
+      a.innerHTML = `
+        <div class="project-bg">
+          <div class="pdf-thumb-fallback">
+            <span class="pdf-icon">PDF</span>
+            <span>Loading preview…</span>
+          </div>
+        </div>
+        <div class="pdf-open-icon">↗</div>
+        <div class="project-overlay">
+          <div class="project-num">${project.num} / 2026</div>
+          <div class="project-title">${project.title}</div>
+          <div class="project-tags">${tagsHtml}</div>
+        </div>
+      `;
+      return a;
+    }
+
+    function renderGrid(containerId, projects) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      projects.forEach(project => {
+        const card = buildCard(project);
+        container.appendChild(card);
+        renderPdfThumbnail(card, project.file);
+      });
+    }
+
+    // ─── PDF THUMBNAIL RENDERING ──────────────────────
+    async function renderPdfThumbnail(cardEl, fileUrl) {
+      const bgEl = cardEl.querySelector('.project-bg');
+      const fallbackEl = cardEl.querySelector('.pdf-thumb-fallback');
+
+      if (!window['pdfjsLib']) {
+        if (fallbackEl) fallbackEl.querySelector('span:last-child').textContent = 'PDF';
+        return;
+      }
+
+      try {
+        const loadingTask = pdfjsLib.getDocument(fileUrl);
+        const pdf = await loadingTask.promise;
+        const page = await pdf.getPage(1);
+
+        const targetWidth = 700;
+        const baseViewport = page.getViewport({ scale: 1 });
+        const scale = targetWidth / baseViewport.width;
+        const viewport = page.getViewport({ scale });
+
+        const canvas = document.createElement('canvas');
+        canvas.className = 'pdf-thumb-canvas';
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        const ctx = canvas.getContext('2d');
+
+        await page.render({ canvasContext: ctx, viewport }).promise;
+
+        bgEl.innerHTML = '';
+        bgEl.appendChild(canvas);
+      } catch (err) {
+        // File not uploaded yet / failed to load — keep a clean fallback instead of breaking the layout
+        if (fallbackEl) {
+          fallbackEl.querySelector('span:last-child').textContent = 'Preview unavailable';
+        }
+        console.warn('Could not render PDF thumbnail for', fileUrl, err);
+      }
+    }
+
+    renderGrid('wavemaker-grid', wavemakerProjects);
+    renderGrid('easyweave-grid', easyweaveProjects);
+
     // ─── SCROLL REVEAL ────────────────────────────────
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(e => {
